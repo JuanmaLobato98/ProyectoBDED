@@ -1,6 +1,7 @@
 package gestion;
 
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,20 +13,20 @@ import java.sql.ResultSet;
  */
 public class DBManager {
 
-    // Conexión a la base de datos
+    // Conexion a la base de datos
     private static Connection conn = null;
 
-    // Configuración de la conexión a la base de datos
+    // Configuracion de la conexion a la base de datos
     private static final String DB_HOST = "localhost";
     private static final String DB_PORT = "3306";
     private static final String DB_NAME = "tienda";
     private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME + "?characterEncoding=latin1";
     private static final String DB_USER = "root";
     private static final String DB_PASS = "1234";
-    private static final String DB_MSQ_CONN_OK = "CONEXIÓN CORRECTA";
-    private static final String DB_MSQ_CONN_NO = "ERROR EN LA CONEXIÓN";
+    private static final String DB_MSQ_CONN_OK = "CONEXION CORRECTA";
+    private static final String DB_MSQ_CONN_NO = "ERROR EN LA CONEXION";
 
-    // Configuración de la tabla Clientes
+    // Configuracion de la tabla Clientes
     private static final String DB_CLI = "clientes";
     private static final String DB_CLI_SELECT = "SELECT * FROM " + DB_CLI;
     private static final String DB_CLI_ID = "id";
@@ -33,7 +34,7 @@ public class DBManager {
     private static final String DB_CLI_DIR = "direccion";
 
     //////////////////////////////////////////////////
-    // MÉTODOS DE CONEXIÓN A LA BASE DE DATOS
+    // METODOS DE CONEXION A LA BASE DE DATOS
     //////////////////////////////////////////////////
     ;
     
@@ -74,12 +75,12 @@ public class DBManager {
     }
 
     /**
-     * Comprueba la conexión y muestra su estado por pantalla
+     * Comprueba la conexion y muestra su estado por pantalla
      *
-     * @return true si la conexión existe y es válida, false en caso contrario
+     * @return true si la conexion existe y es valida, false en caso contrario
      */
     public static boolean isConnected() {
-        // Comprobamos estado de la conexión
+        // Comprobamos estado de la conexion
         try {
             if (conn != null && conn.isValid(0)) {
                 System.out.println(DB_MSQ_CONN_OK);
@@ -95,11 +96,11 @@ public class DBManager {
     }
 
     /**
-     * Cierra la conexión con la base de datos
+     * Cierra la conexion con la base de datos
      */
     public static void close() {
         try {
-            System.out.print("Cerrando la conexión...");
+            System.out.print("Cerrando la conexion...");
             conn.close();
             System.out.println("OK!");
         } catch (SQLException ex) {
@@ -108,7 +109,7 @@ public class DBManager {
     }
 
     //////////////////////////////////////////////////
-    // MÉTODOS DE TABLA CLIENTES
+    // METODOS DE TABLA CLIENTES
     //////////////////////////////////////////////////
     ;
     
@@ -122,8 +123,8 @@ public class DBManager {
      */
     public static ResultSet getTablaClientes(int resultSetType, int resultSetConcurrency) {
         try {
-            Statement stmt = conn.createStatement(resultSetType, resultSetConcurrency);
-            ResultSet rs = stmt.executeQuery(DB_CLI_SELECT);
+            PreparedStatement stmt = conn.prepareStatement(DB_CLI_SELECT, resultSetType, resultSetConcurrency);
+            ResultSet rs = stmt.executeQuery();
             //stmt.close();
             return rs;
         } catch (SQLException ex) {
@@ -161,7 +162,7 @@ public class DBManager {
     }
 
     //////////////////////////////////////////////////
-    // MÉTODOS DE UN SOLO CLIENTE
+    // METODOS DE UN SOLO CLIENTE
     //////////////////////////////////////////////////
     ;
     
@@ -173,10 +174,11 @@ public class DBManager {
     public static ResultSet getCliente(int id) {
         try {
             // Realizamos la consulta SQL
-            Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            String sql = DB_CLI_SELECT + " WHERE " + DB_CLI_ID + "='" + id + "';";
+        	String sql = DB_CLI_SELECT + " WHERE " + DB_CLI_ID + " = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            stmt.setString(1, String.valueOf(id));
             //System.out.println(sql);
-            ResultSet rs = stmt.executeQuery(sql);
+            ResultSet rs = stmt.executeQuery();
             //stmt.close();
             
             // Si no hay primer registro entonces no existe el cliente
@@ -239,7 +241,7 @@ public class DBManager {
                 return;
             }
             
-            // Imprimimos su información por pantalla
+            // Imprimimos su informacion por pantalla
             int cid = rs.getInt(DB_CLI_ID);
             String nombre = rs.getString(DB_CLI_NOM);
             String direccion = rs.getString(DB_CLI_DIR);
@@ -255,7 +257,7 @@ public class DBManager {
      * Solicita a la BD insertar un nuevo registro cliente
      *
      * @param nombre nombre del cliente
-     * @param direccion dirección del cliente
+     * @param direccion direccion del cliente
      * @return verdadero si pudo insertarlo, false en caso contrario
      */
     public static boolean insertCliente(String nombre, String direccion) {
@@ -286,7 +288,7 @@ public class DBManager {
      *
      * @param id id del cliente a modificar
      * @param nombre nuevo nombre del cliente
-     * @param direccion nueva dirección del cliente
+     * @param direccion nueva direccion del cliente
      * @return verdadero si pudo modificarlo, false en caso contrario
      */
     public static boolean updateCliente(int id, String nuevoNombre, String nuevaDireccion) {
@@ -310,7 +312,7 @@ public class DBManager {
                 System.out.println("OK!");
                 return true;
             } else {
-                System.out.println("ERROR. ResultSet vacío.");
+                System.out.println("ERROR. ResultSet vacio.");
                 return false;
             }
         } catch (SQLException ex) {
@@ -345,7 +347,7 @@ public class DBManager {
                 System.out.println("OK!");
                 return true;
             } else {
-                System.out.println("ERROR. ResultSet vacío.");
+                System.out.println("ERROR. ResultSet vacio.");
                 return false;
             }
 
