@@ -1,9 +1,13 @@
+package app;
 
+import gestion.DBManager;
 import java.util.Scanner;
+
+import gestion.DBManager;
 
 /**
  *
- * @author lionel
+ * @author Juanma Lobato
  */
 public class GestionClientes {
 
