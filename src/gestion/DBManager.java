@@ -4,8 +4,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Scanner;
 import java.sql.ResultSet;
 
 /**
@@ -18,10 +19,10 @@ public class DBManager {
     private static Connection conn = null;
 
     // Configuracion de la conexion a la base de datos
-    private static final String DB_HOST = "localhost";
-    private static final String DB_PORT = "3306";
-    private static final String DB_NAME = "tienda";
-    private static final String DB_URL = "jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_NAME + "?characterEncoding=latin1";
+    private static String db_host = getHost();
+    private static String db_port = getPort();
+    private static String db_name = getName();
+    private static final String DB_URL = "jdbc:mysql://" + db_host + ":" + db_port + "/" + db_name + "?characterEncoding=latin1";
     private static final String DB_USER = "root";
     private static final String DB_PASS = "1234";
     private static final String DB_MSQ_CONN_OK = "CONEXION CORRECTA";
@@ -37,7 +38,43 @@ public class DBManager {
     //////////////////////////////////////////////////
     // METODOS DE CONEXION A LA BASE DE DATOS
     //////////////////////////////////////////////////
-    ;
+    
+    public static String getHost () {
+    	try {
+    		Scanner in = new Scanner (System.in);
+        	System.out.println("Introduce la direccion de la Base de Datos");
+        	String host=in.nextLine();
+        	return host;
+    	}catch (Exception e) {
+    		e.printStackTrace();
+    		return null;
+    	}
+    	
+    }
+    
+    public static String getPort () {
+       	try {
+       		Scanner in = new Scanner (System.in);
+        	System.out.println("Introduce el puerto de la Base de Datos");
+        	String port=in.nextLine();
+        	return port;
+    	}catch (Exception e) {
+    		e.printStackTrace();
+    		return null;
+    	}
+    }
+    
+    public static String getName () {
+       	try {
+       		Scanner in = new Scanner (System.in);
+        	System.out.println("Introduce el nombre de la Base de Datos");
+        	String name=in.nextLine();
+        	return name;
+    	}catch (Exception e) {
+    		e.printStackTrace();
+    		return null;
+    	}
+    }
     
     /**
      * Intenta cargar el JDBC driver.
@@ -114,6 +151,80 @@ public class DBManager {
     //////////////////////////////////////////////////
     ;
     
+    public static void printTablas() {
+    	try {
+    		DatabaseMetaData dbmt = conn.getMetaData();
+    		ResultSet rs = dbmt.getTables(conn.getCatalog(), null, "%", null);
+    		System.out.print("Tablas:\t");
+    		while (rs.next()) {
+    			String tabla = rs.getString("Table_NAME");
+    			System.out.print(tabla+"\t");
+    		}
+    	}catch (SQLException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    public static void printColumnas (String tabla) {
+    	try {
+    		DatabaseMetaData dbmt = conn.getMetaData();
+    		ResultSet rs = dbmt.getColumns(conn.getCatalog(), null, tabla, "%");
+    		System.out.print("Tablas:\t");
+    		while (rs.next()) {
+    			String columnName = rs.getString("COLUMN_NAME");
+    		    String columnType = rs.getString("TYPE_NAME");
+    			System.out.println("Columna: "+columnName+"\nTipo: "+columnType);
+    		}
+    	}catch (SQLException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    public static ResultSet getColumnas (String tabla) {
+    	try {
+    		DatabaseMetaData dbmt = conn.getMetaData();
+    		ResultSet rs = dbmt.getColumns(conn.getCatalog(), null, tabla, "%");
+    		if(!rs.first() || rs==null) {
+    			return null;
+    		}
+    		return rs;
+    	}catch (SQLException e) {
+    		e.printStackTrace();
+    		return null;
+    	}
+    }
+    
+    public static ResultSet getTabla(String tabla) {
+        try {
+        	String consulta = "SELECT * FROM "+tabla;
+            PreparedStatement sentencia = conn.prepareStatement(consulta,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            ResultSet result = sentencia.executeQuery();
+            return result;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
+    public static void printTabla(String tabla) {
+        try {
+            ResultSet rs = getTabla(tabla);
+            for (int x=1;x<=rs.getMetaData().getColumnCount();x++)
+            	  System.out.print(rs.getMetaData().getColumnName(x)+ "\t");
+            		      
+            	System.out.println("");
+            		      
+            	// Ahora volcamos los datos
+            	while(rs.next()) {
+            	  for (int x=1;x<=rs.getMetaData().getColumnCount();x++)
+            	    System.out.print(rs.getString(x)+ "\t");
+            		      
+            	  System.out.println("");
+            	}
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
     // Devuelve 
     // Los argumentos indican el tipo de ResultSet deseado
     /**
