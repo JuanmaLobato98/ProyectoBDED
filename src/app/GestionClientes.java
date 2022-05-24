@@ -28,17 +28,20 @@ public class GestionClientes {
     public static boolean menuPrincipal() {
         System.out.println("");
         System.out.println("MENU PRINCIPAL");
+        System.out.println("0. Salir");
         System.out.println("1. Listar clientes");
         System.out.println("2. Nuevo cliente");
         System.out.println("3. Modificar cliente");
         System.out.println("4. Eliminar cliente");
-        System.out.println("5. Salir");
+        System.out.println("5. Buscar clientes por direccion");
         
         Scanner in = new Scanner(System.in);
             
         int opcion = pideInt("Elige una opcion: ");
         
         switch (opcion) {
+        	case 0:
+        		return true;
             case 1:
                 opcionMostrarClientes();
                 return false;
@@ -52,7 +55,8 @@ public class GestionClientes {
                 opcionEliminarCliente();
                 return false;
             case 5:
-                return true;
+            	opcionClientesDireccion();
+                return false;
             default:
                 System.out.println("Opcion elegida incorrecta");
                 return false;
@@ -157,5 +161,14 @@ public class GestionClientes {
         } else {
             System.out.println("Error :(");
         }
+    }
+    
+    public static void opcionClientesDireccion() {
+    	Scanner in = new Scanner(System.in);
+    	
+    	String direccion = pideLinea("Indica la direccio que desea buscar");
+    	
+    	System.out.println("Listado de clientes de "+direccion);
+    	DBManager.getClientesDeDireccion(direccion);
     }
 }

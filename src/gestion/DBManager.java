@@ -2,6 +2,7 @@ package gestion;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -355,6 +356,29 @@ public class DBManager {
             ex.printStackTrace();
             return false;
         }
+        
+
+    }
+    
+    public static void getClientesDeDireccion (String direccion) {
+    	try {
+    		CallableStatement proc = conn.prepareCall("{call cliente_direccion(?)}");
+    		proc.setString(1, direccion);
+    		proc.execute();
+    		
+    		ResultSet rs = proc.getResultSet();
+    		while (rs.next()) {
+                 int id = rs.getInt(DB_CLI_ID);
+                 String n = rs.getString(DB_CLI_NOM);
+                 String d = rs.getString(DB_CLI_DIR);
+                 System.out.println(id + "\t" + n + "\t" + d);
+            }
+            rs.close();
+    		
+    	}catch (SQLException e) {
+    		e.printStackTrace();
+    	}
+    	
     }
 
 }
