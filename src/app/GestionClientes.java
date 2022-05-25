@@ -29,12 +29,12 @@ public class GestionClientes {
         System.out.println("");
         System.out.println("MENU PRINCIPAL");
         System.out.println("0. Salir");
-        System.out.println("1. Imprimir tabla");
+        System.out.println("1. ");
         System.out.println("2. Imprimir tabla");
-        System.out.println("3. Nuevo cliente");
-        System.out.println("4. Modificar cliente");
-        System.out.println("5. Eliminar cliente");
-        System.out.println("6. Buscar clientes por direccion"); //procedimiento almacenado
+        System.out.println("3. Nueva columna");
+        System.out.println("4. Modificar columna");
+        System.out.println("5. Eliminar columna");
+        System.out.println("6. "); 
         
         Scanner in = new Scanner(System.in);
             
@@ -44,7 +44,7 @@ public class GestionClientes {
         	case 0:
         		return true;
             case 1:
-                
+	            //no hace nada aun
                 return false;
             case 2:
                 opcionImprimirTabla();
@@ -59,7 +59,7 @@ public class GestionClientes {
                 opcionEliminarCliente();
                 return false;
             case 6:
-            	opcionClientesDireccion();
+            	//opcionClientesDireccion(); //no funciona
                 return false;
             default:
                 System.out.println("Opcion elegida incorrecta");
@@ -106,19 +106,15 @@ public class GestionClientes {
     	DBManager.printTabla(tabla);
     }
 
-    public static void opcionMostrarClientes() {
-        System.out.println("Listado de Clientes:");
-        DBManager.printTablaClientes();
-    }
 
     public static void opcionNuevoCliente() {
         Scanner in = new Scanner(System.in);
+        DBManager.printTablas();
+        System.out.println("Introduce en que tabla insertar:");
+        
+        String tabla = pideLinea("");
 
-        System.out.println("Introduce los datos del nuevo cliente:");
-        String nombre = pideLinea("Nombre: ");
-        String direccion = pideLinea("Direccion: ");
-
-        boolean res = DBManager.insertCliente(nombre, direccion);
+        boolean res = DBManager.insertColumn(tabla);
 
         if (res) {
             System.out.println("Cliente registrado correctamente");
@@ -130,23 +126,13 @@ public class GestionClientes {
     public static void opcionModificarCliente() {
         Scanner in = new Scanner(System.in);
 
-        int id = pideInt("Indica el id del cliente a modificar: ");
-
-        // Comprobamos si existe el cliente
-        if (!DBManager.existsCliente(id)) {
-            System.out.println("El cliente " + id + " no existe.");
-            return;
-        }
-
-        // Mostramos datos del cliente a modificar
-        DBManager.printCliente(id);
-
-        // Solicitamos los nuevos datos
-        String nombre = pideLinea("Nuevo nombre: ");
-        String direccion = pideLinea("Nueva direccion: ");
+        DBManager.printTablas();
+        String tabla = pideLinea("Indica la tabla donde modificar: ");
+        
+        
 
         // Registramos los cambios
-        boolean res = DBManager.updateCliente(id, nombre, direccion);
+        boolean res = DBManager.updateColumn(tabla);
 
         if (res) {
             System.out.println("Cliente modificado correctamente");
@@ -158,16 +144,11 @@ public class GestionClientes {
     public static void opcionEliminarCliente() {
         Scanner in = new Scanner(System.in);
 
-        int id = pideInt("Indica el id del cliente a eliminar: ");
-
-        // Comprobamos si existe el cliente
-        if (!DBManager.existsCliente(id)) {
-            System.out.println("El cliente " + id + " no existe.");
-            return;
-        }
+        DBManager.printTablas();
+        String tabla = pideLinea("Indica la tabla donde borrar: ");
 
         // Eliminamos el cliente
-        boolean res = DBManager.deleteCliente(id);
+        boolean res = DBManager.deleteColumn(tabla);
 
         if (res) {
             System.out.println("Cliente eliminado correctamente");
@@ -176,12 +157,12 @@ public class GestionClientes {
         }
     }
     
-    public static void opcionClientesDireccion() {
+    /*public static void opcionClientesDireccion() {
     	Scanner in = new Scanner(System.in);
     	
     	String direccion = pideLinea("Indica la direccion que desee buscar: ");
     	
     	System.out.println("Listado de clientes de "+direccion);
     	DBManager.getClientesDeDireccion(direccion);
-    }
+    }*/
 }
