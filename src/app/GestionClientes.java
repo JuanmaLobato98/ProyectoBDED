@@ -34,37 +34,50 @@ public class GestionClientes {
         System.out.println("3. Nueva tupla");
         System.out.println("4. Modificar tupla");
         System.out.println("5. Eliminar tupla");
-        System.out.println("6. Exportar tabla"); 
+        System.out.println("6. Exportar tabla");
+        System.out.println("7. Crear tabla");
+        System.out.println("8. Filtrar filas");
+       try {
+    	   Scanner in = new Scanner(System.in);
+           
+           int opcion = pideInt("Elige una opcion: ");
+           
+           switch (opcion) {
+           	case 0:
+           		return true;
+               case 1:
+   	            //no hace nada aun
+                   return false;
+               case 2:
+                   opcionImprimirTabla();
+                   return false;
+               case 3:
+                   opcionNuevoCliente();
+                   return false;
+               case 4:
+                   opcionModificarCliente();
+                   return false;
+               case 5:
+                   opcionEliminarCliente();
+                   return false;
+               case 6:
+               	opcionExportarTabla();
+                   return false;
+               case 7:
+               	opcionCrearTabla();
+                   return false;
+               case 8:
+               	opcionFiltrarFilas();
+                   return false;
+               default:
+                   System.out.println("Opcion elegida incorrecta");
+                   return false;
+           }
+       }catch (Exception e) {
+    	   e.printStackTrace();
+    	   return false;
+       }
         
-        Scanner in = new Scanner(System.in);
-            
-        int opcion = pideInt("Elige una opcion: ");
-        
-        switch (opcion) {
-        	case 0:
-        		return true;
-            case 1:
-	            //no hace nada aun
-                return false;
-            case 2:
-                opcionImprimirTabla();
-                return false;
-            case 3:
-                opcionNuevoCliente();
-                return false;
-            case 4:
-                opcionModificarCliente();
-                return false;
-            case 5:
-                opcionEliminarCliente();
-                return false;
-            case 6:
-            	opcionExportarTabla();
-                return false;
-            default:
-                System.out.println("Opcion elegida incorrecta");
-                return false;
-        }
         
     }
     
@@ -169,6 +182,34 @@ public class GestionClientes {
         }else {
         	System.out.println("Error al crear el fichero");
         }
+    }
+    
+    public static void opcionCrearTabla () {
+    	Scanner in = new Scanner (System.in);
+    	
+    	System.out.println("Introduce el nombre de la nueva tabla");
+    	String nombre = in.next();
+    	System.out.println("Introduce el numero de columnas tabla");
+    	int columnas = in.nextInt();
+    	
+    	DBManager.crearTabla(nombre, columnas);
+
+    }
+    
+    public static void opcionFiltrarFilas () {
+    	Scanner in = new Scanner (System.in);
+    	
+    	System.out.println("Introduce el nombre de la tabla: ");
+    	String tabla=in.next();
+    	
+    	System.out.println(DBManager.printColumnas(tabla));
+    	
+    	System.out.println("Introduce el nombre del campo a filtrar: ");
+    	String campo=in.next();
+    	System.out.println("Introduce el valor del campo: ");
+    	String valor=in.next();
+    	
+    	DBManager.printTuplas(tabla, campo, valor);
     }
     
     /*public static void opcionClientesDireccion() {

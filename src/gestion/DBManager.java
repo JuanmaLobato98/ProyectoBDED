@@ -9,6 +9,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -38,38 +39,43 @@ public class DBManager {
 	//////////////////////////////////////////////////
 
 	public static String getHost() {
+		Scanner in = new Scanner(System.in);
 		try {
-			Scanner in = new Scanner(System.in);
 			System.out.println("Introduce la direccion de la Base de Datos");
 			String host = in.nextLine();
 			return host;
 		} catch (Exception e) {
 			e.printStackTrace();
+			in.nextLine();
 			return null;
 		}
 
 	}
 
 	public static String getPort() {
+		Scanner in = new Scanner(System.in);
 		try {
-			Scanner in = new Scanner(System.in);
+			
 			System.out.println("Introduce el puerto de la Base de Datos");
 			String port = in.nextLine();
 			return port;
 		} catch (Exception e) {
 			e.printStackTrace();
+			in.nextLine();
 			return null;
 		}
 	}
 
 	public static String getName() {
+		Scanner in = new Scanner(System.in);
 		try {
-			Scanner in = new Scanner(System.in);
+			
 			System.out.println("Introduce el nombre de la Base de Datos");
 			String name = in.nextLine();
 			return name;
 		} catch (Exception e) {
 			e.printStackTrace();
+			in.nextLine();
 			return null;
 		}
 	}
@@ -145,10 +151,6 @@ public class DBManager {
 		}
 	}
 
-	//////////////////////////////////////////////////
-	// METODOS DE TABLA CLIENTES
-	//////////////////////////////////////////////////
-	;
 
 	public static void printTablas() {
 		try {
@@ -244,6 +246,94 @@ public class DBManager {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static ResultSet getTuplas(String tabla, String campo, String valor) {
+		try {
+			// Realizamos la consulta SQL
+			String sql = "SELECT * FROM " + tabla + " WHERE " + campo + " =?";
+			PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			stmt.setString(1, valor);
+			ResultSet rs = stmt.executeQuery();
+
+			// Si no hay primer registro entonces no existe el cliente
+			if (!rs.first()) {
+				return null;
+			}
+
+			// Todo bien, devolvemos el cliente
+			return rs;
+
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	
+	 public static boolean printTuplas(String tabla, String campo, String valor) {
+    	 try {
+             // Obtenemos el cliente
+             ResultSet rs = getTuplas(tabla,campo,valor);
+             if (rs == null || !rs.first()) {
+                 System.out.println("No existe el resultado ");
+                 return false;
+             }
+             while (rs.next()) {
+ 				for (int x = 1; x <= rs.getMetaData().getColumnCount(); x++) {
+ 					System.out.print( (rs.getString(x) + "\t"));
+ 				}
+ 				System.out.print("\n");
+ 			}
+             
+             return true;
+         } catch (SQLException ex) {
+             ex.printStackTrace();
+             return false;
+         }
+	 }
+	
+	public static void crearTabla (String nombre, int columnas) {
+		Scanner in = new Scanner (System.in);
+		try {
+			System.out.println("Introduce el nombre de la columna 1");
+			String col1 = in.next();
+			System.out.println("Introduce el tipo de la columna 1 (1 VARCHAR o 2 INT)");
+			int tipo1 = in.nextInt();
+			if(tipo1==1) {
+				PreparedStatement stmt = conn.prepareStatement("CREATE TABLE "+nombre+" ("+col1+" VARCHAR(50)) ");
+				stmt.execute();
+			}else {
+				PreparedStatement stmt = conn.prepareStatement("CREATE TABLE "+nombre+" ("+col1+" INT)");
+				stmt.execute();
+			}
+			
+			
+			
+			for (int i=2; i<=columnas;i++) {
+				System.out.println("Introduce el nombre de la columna "+i);
+				String col = in.next();
+				System.out.println("Introduce el tipo de la columna "+i+" (1 VARCHAR o 2 INT");
+				int tipo = in.nextInt();
+				if(tipo==1) {
+					PreparedStatement stmtcols = conn.prepareStatement("ALTER TABLE "+nombre+" ADD COLUMN "+col+" VARCHAR(50);");
+					stmtcols.execute();
+				}else {
+					PreparedStatement stmtcols = conn.prepareStatement("ALTER TABLE "+nombre+" ADD COLUMN "+col+" INT;");
+					stmtcols.execute();
+				}
+			}
+			
+		}catch (InputMismatchException e) {
+			e.printStackTrace();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
 	}
 
 	public static boolean insertColumn(String tabla) {
