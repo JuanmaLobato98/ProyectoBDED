@@ -2,6 +2,9 @@ package gestion;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -162,11 +165,12 @@ public class DBManager {
 		}
 	}
 
-	public static void printColumnas(String tabla) {
+	
+	public static void printColumnasTipo(String tabla) {
 		try {
 			DatabaseMetaData dbmt = conn.getMetaData();
 			ResultSet rs = dbmt.getColumns(conn.getCatalog(), null, tabla, "%");
-			System.out.print("Tablas:\t");
+			System.out.print("Tablas: ");
 			while (rs.next()) {
 				String columnName = rs.getString("COLUMN_NAME");
 				String columnType = rs.getString("TYPE_NAME");
@@ -174,6 +178,22 @@ public class DBManager {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static String printColumnas(String tabla) {
+		try {
+			String columnas="";
+			DatabaseMetaData dbmt = conn.getMetaData();
+			ResultSet rs = dbmt.getColumns(conn.getCatalog(), null, tabla, "%");
+			while (rs.next()) {
+				String columnName = rs.getString("COLUMN_NAME");
+				columnas += columnName+"\t";
+			}
+			return columnas;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -204,23 +224,25 @@ public class DBManager {
 		}
 	}
 
-	public static void printTabla(String tabla) {
+	public static String printTabla(String tabla) {
 		try {
 			ResultSet rs = getTabla(tabla);
 			for (int x = 1; x <= rs.getMetaData().getColumnCount(); x++)
 				System.out.print(rs.getMetaData().getColumnName(x) + "\t");
 
 			System.out.println("");
-
+			String datosTabla="";
 			// Ahora volcamos los datos
 			while (rs.next()) {
-				for (int x = 1; x <= rs.getMetaData().getColumnCount(); x++)
-					System.out.print(rs.getString(x) + "\t");
-
-				System.out.println("");
+				for (int x = 1; x <= rs.getMetaData().getColumnCount(); x++) {
+					datosTabla += (rs.getString(x) + "\t");
+				}
+				datosTabla +="\n";
 			}
+			return datosTabla;
 		} catch (SQLException ex) {
 			ex.printStackTrace();
+			return null;
 		}
 	}
 
@@ -344,7 +366,26 @@ public class DBManager {
 			ex.printStackTrace();
 			return false;
 		}
+	}
+	
+	public static boolean exportarTabla (String tabla) {
+		try {
+			File fichero = new File (tabla+".txt");//declaramos el fichero, con esta ruta se crea directamente en la raiz del proyecto
+			FileWriter escribir = new FileWriter(fichero);//declaramos el objeto para escribir
+			
+			fichero.createNewFile();//creamos el fichero
+			
+			escribir.write(db_name +"\n");
+			escribir.write(tabla + "\n");
+			escribir.write(printColumnas(tabla)+"\n");
+			escribir.write(printTabla(tabla));
+			escribir.close();
 
+			return true;
+		}catch (IOException e) {//controlamos las excepciones
+			System.err.println("Error con el fichero");
+			return false;
+		}
 	}
 
 	//obsoleto desde que se puede usar cualquier bd

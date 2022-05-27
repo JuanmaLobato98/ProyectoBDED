@@ -31,10 +31,10 @@ public class GestionClientes {
         System.out.println("0. Salir");
         System.out.println("1. ");
         System.out.println("2. Imprimir tabla");
-        System.out.println("3. Nueva columna");
-        System.out.println("4. Modificar columna");
-        System.out.println("5. Eliminar columna");
-        System.out.println("6. "); 
+        System.out.println("3. Nueva tupla");
+        System.out.println("4. Modificar tupla");
+        System.out.println("5. Eliminar tupla");
+        System.out.println("6. Exportar tabla"); 
         
         Scanner in = new Scanner(System.in);
             
@@ -59,7 +59,7 @@ public class GestionClientes {
                 opcionEliminarCliente();
                 return false;
             case 6:
-            	//opcionClientesDireccion(); //no funciona
+            	opcionExportarTabla();
                 return false;
             default:
                 System.out.println("Opcion elegida incorrecta");
@@ -97,13 +97,12 @@ public class GestionClientes {
         }
     }
     
-    
     public static void opcionImprimirTabla () {
     	Scanner in = new Scanner (System.in);
     	DBManager.printTablas();
     	
     	String tabla = pideLinea("Introduzca la tabla que desee mostrar: ");
-    	DBManager.printTabla(tabla);
+    	System.out.println( DBManager.printTabla(tabla));
     }
 
 
@@ -154,6 +153,21 @@ public class GestionClientes {
             System.out.println("Cliente eliminado correctamente");
         } else {
             System.out.println("Error :(");
+        }
+    }
+    
+    public static void opcionExportarTabla () {
+    	Scanner in = new Scanner(System.in);
+
+        DBManager.printTablas();
+        String tabla = pideLinea("Indica la tabla que exportar: ");
+        
+        if(DBManager.exportarTabla(tabla)) {
+        	System.out.println("-----------------------");
+			System.out.println("Fichero creado!");
+			System.out.println("-----------------------");
+        }else {
+        	System.out.println("Error al crear el fichero");
         }
     }
     
