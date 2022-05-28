@@ -3,9 +3,9 @@ package gestion;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -16,19 +16,19 @@ import java.sql.ResultSetMetaData;
 
 /**
  *
- * @author lionel
+ * @author Juanma Lobato
  */
 public class DBManager {
 
 	// Conexion a la base de datos
 	private static Connection conn = null;
+	private static Connection connServer = null;
 
 	// Configuracion de la conexion a la base de datos
 	private static String db_host = getHost();
 	private static String db_port = getPort();
-	private static String db_name = getName();
-	private static final String DB_URL = "jdbc:mysql://" + db_host + ":" + db_port + "/" + db_name
-			+ "?characterEncoding=latin1";
+	private static String db_name=null;
+	private static String DB_URL = "jdbc:mysql://" + db_host + ":" + db_port;
 	private static final String DB_USER = "root";
 	private static final String DB_PASS = "1234";
 	private static final String DB_MSQ_CONN_OK = "CONEXION CORRECTA";
@@ -66,12 +66,24 @@ public class DBManager {
 		}
 	}
 
+
+	public static String getDb_name() {
+		return db_name;
+	}
+
+	public static void setDb_name(String db_name) {
+		DBManager.db_name = db_name;
+	}
+
+
 	public static String getName() {
 		Scanner in = new Scanner(System.in);
-		try {
-			
+		try {		
 			System.out.println("Introduce el nombre de la Base de Datos");
 			String name = in.nextLine();
+			setDb_name(name);
+			connServer.close();
+			
 			return name;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,6 +91,27 @@ public class DBManager {
 			return null;
 		}
 	}
+	
+	public static void getBDs () {
+		try {
+			PreparedStatement sentencia = connServer.prepareStatement("SHOW DATABASES");
+			
+			ResultSet resultado = sentencia.executeQuery();
+			
+			while(resultado.next()) {
+				System.out.println(resultado.getString(1));
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+
+	public static Connection getConn() {
+		return conn;
+	}
+
 
 	/**
 	 * Intenta cargar el JDBC driver.
@@ -99,6 +132,18 @@ public class DBManager {
 			return false;
 		}
 	}
+	
+	public static boolean connectServer () {
+		try {
+			System.out.print("Conectando al servidor...");
+			connServer = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+			System.out.println("OK!");
+			return true;
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
 
 	/**
 	 * Intenta conectar con la base de datos.
@@ -108,7 +153,7 @@ public class DBManager {
 	public static boolean connect() {
 		try {
 			System.out.print("Conectando a la base de datos...");
-			conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+			conn = DriverManager.getConnection(DB_URL+"/"+getDb_name(), DB_USER, DB_PASS);
 			System.out.println("OK!");
 			return true;
 		} catch (SQLException ex) {
@@ -229,11 +274,9 @@ public class DBManager {
 	public static String printTabla(String tabla) {
 		try {
 			ResultSet rs = getTabla(tabla);
-			for (int x = 1; x <= rs.getMetaData().getColumnCount(); x++)
-				System.out.print(rs.getMetaData().getColumnName(x) + "\t");
 
 			System.out.println("");
-			String datosTabla="";
+			String datosTabla=printColumnas(tabla)+"\n";
 			// Ahora volcamos los datos
 			while (rs.next()) {
 				for (int x = 1; x <= rs.getMetaData().getColumnCount(); x++) {
@@ -442,6 +485,7 @@ public class DBManager {
 			PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs = stmt.executeQuery();
+			
 
 			 if (rs.first()) {
 	                rs.deleteRow();
@@ -457,48 +501,5 @@ public class DBManager {
 			return false;
 		}
 	}
-	
-	public static boolean exportarTabla (String tabla) {
-		try {
-			File fichero = new File (tabla+".txt");//declaramos el fichero, con esta ruta se crea directamente en la raiz del proyecto
-			FileWriter escribir = new FileWriter(fichero);//declaramos el objeto para escribir
-			
-			fichero.createNewFile();//creamos el fichero
-			
-			escribir.write(db_name +"\n");
-			escribir.write(tabla + "\n");
-			escribir.write(printColumnas(tabla)+"\n");
-			escribir.write(printTabla(tabla));
-			escribir.close();
-
-			return true;
-		}catch (IOException e) {//controlamos las excepciones
-			System.err.println("Error con el fichero");
-			return false;
-		}
-	}
-
-	//obsoleto desde que se puede usar cualquier bd
-	
-	/*public static void getClientesDeDireccion(String direccion) {
-		try {
-			CallableStatement proc = conn.prepareCall("{call cliente_direccion(?)}");
-			proc.setString(1, direccion);
-			proc.execute();
-
-			ResultSet rs = proc.getResultSet();
-			while (rs.next()) {
-				int id = rs.getInt(DB_CLI_ID);
-				String n = rs.getString(DB_CLI_NOM);
-				String d = rs.getString(DB_CLI_DIR);
-				System.out.println(id + "\t" + n + "\t" + d);
-			}
-			rs.close();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-	}*/
 
 }

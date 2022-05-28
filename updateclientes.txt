@@ -1,0 +1,5 @@
+banco
+clientes
+dni,nombre
+11111111L Kiko
+22222222J Jesus

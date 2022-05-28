@@ -1,5 +1,6 @@
 package app;
 
+import gestion.DBFileManager;
 import gestion.DBManager;
 import java.util.Scanner;
 
@@ -14,6 +15,9 @@ public class GestionClientes {
 
     	System.out.println("Introduce los datos de la BD");
     	DBManager.loadDriver();
+    	DBManager.connectServer();
+    	DBManager.getBDs();
+    	DBManager.getName();
         DBManager.connect();
         
         boolean salir = false;
@@ -29,7 +33,7 @@ public class GestionClientes {
         System.out.println("");
         System.out.println("MENU PRINCIPAL");
         System.out.println("0. Salir");
-        System.out.println("1. ");
+        System.out.println("1. Cambiar base de datos");
         System.out.println("2. Imprimir tabla");
         System.out.println("3. Nueva tupla");
         System.out.println("4. Modificar tupla");
@@ -37,6 +41,8 @@ public class GestionClientes {
         System.out.println("6. Exportar tabla");
         System.out.println("7. Crear tabla");
         System.out.println("8. Filtrar filas");
+        System.out.println("9. Insertar desde fichero");
+        System.out.println("10. Actualizar desde fichero");
        try {
     	   Scanner in = new Scanner(System.in);
            
@@ -46,7 +52,7 @@ public class GestionClientes {
            	case 0:
            		return true;
                case 1:
-   	            //no hace nada aun
+   	            	opcionCambiarBD();
                    return false;
                case 2:
                    opcionImprimirTabla();
@@ -69,6 +75,15 @@ public class GestionClientes {
                case 8:
                	opcionFiltrarFilas();
                    return false;
+               case 9:
+            	   opcionInsertarFichero();
+                      return false;
+               case 10:
+            	   opcionActualizarFichero();
+                     return false;
+               case 11:
+            	   opcionBorrarFichero();
+                     return false;
                default:
                    System.out.println("Opcion elegida incorrecta");
                    return false;
@@ -108,6 +123,14 @@ public class GestionClientes {
                 System.out.println("No has introducido una cadena de texto. Vuelve a intentarlo.");
             }
         }
+    }
+    
+    public static void opcionCambiarBD () {
+    	DBManager.close();
+    	DBManager.connectServer();
+    	DBManager.getBDs();
+    	DBManager.getName();
+        DBManager.connect();
     }
     
     public static void opcionImprimirTabla () {
@@ -175,7 +198,7 @@ public class GestionClientes {
         DBManager.printTablas();
         String tabla = pideLinea("Indica la tabla que exportar: ");
         
-        if(DBManager.exportarTabla(tabla)) {
+        if(DBFileManager.exportarTabla(tabla)) {
         	System.out.println("-----------------------");
 			System.out.println("Fichero creado!");
 			System.out.println("-----------------------");
@@ -212,12 +235,30 @@ public class GestionClientes {
     	DBManager.printTuplas(tabla, campo, valor);
     }
     
-    /*public static void opcionClientesDireccion() {
-    	Scanner in = new Scanner(System.in);
+    public static void opcionInsertarFichero () {
+    	Scanner in = new Scanner (System.in);
     	
-    	String direccion = pideLinea("Indica la direccion que desee buscar: ");
+    	System.out.println("Introduce el nombre de la ruta del fichero: ");
+    	String ruta=in.next();
     	
-    	System.out.println("Listado de clientes de "+direccion);
-    	DBManager.getClientesDeDireccion(direccion);
-    }*/
+    	DBFileManager.insertarDeFichero(ruta);
+    }
+    
+    public static void opcionActualizarFichero () {
+    	Scanner in = new Scanner (System.in);
+    	
+    	System.out.println("Introduce el nombre de la ruta del fichero: ");
+    	String ruta=in.next();
+    	
+    	DBFileManager.actualizarDeFichero(ruta);
+    }
+    
+    public static void opcionBorrarFichero () {
+    	Scanner in = new Scanner (System.in);
+    	
+    	System.out.println("Introduce el nombre de la ruta del fichero: ");
+    	String ruta=in.next();
+    	
+    	DBFileManager.borrarDeFichero(ruta);
+    }
 }

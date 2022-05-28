@@ -1,0 +1,5 @@
+banco
+clientes
+dni,nombre,telefono,direccion
+11111111L Jose 611223344 Malaga
+22222222J Pepe 634789877 Mijas
