@@ -9,8 +9,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+/**
+ * Clase que gestiona los metodos que trabajan con ficheros en la base de datos
+ * 
+ * @author Juanma
+ *
+ */
 public class DBFileManager {
 
+	/**
+	 * Crea un fichero con el contenido de una tabla
+	 * @param tabla nombre de la tabla
+	 * @return true si se ha creado el fichero, false si no
+	 */
 	public static boolean exportarTabla (String tabla) {
 		try {
 			File fichero = new File (tabla+".txt");//declaramos el fichero, con esta ruta se crea directamente en la raiz del proyecto
@@ -30,29 +41,35 @@ public class DBFileManager {
 		}
 	}
 	
+	/**
+	 * Inserta registros en una tabla provenientes de un fichero
+	 * 
+	 * @param ruta ruta donde se encuentra el fichero
+	 * @return true si se han insertado, false si no
+	 */
 	public static boolean insertarDeFichero (String ruta) {
 		try {
 			File fichero = new File(ruta);
 			Scanner lec = new Scanner (fichero);
 			do{
-				String dbName=lec.nextLine();
-				if(!dbName.equals(DBManager.getDb_name())) {
-					DBManager.close();
+				String dbName=lec.nextLine();//la primera linea es el nombre de la BD
+				if(!dbName.equals(DBManager.getDb_name())) { //si el nombre no coincide con el de la conexion actual 
+					DBManager.close();//cierra la conexion
 					DBManager.setDb_name(dbName);
-					DBManager.connect();
+					DBManager.connect(); //y crea una nueva conexion a esa base de datos
 					System.out.println("Base de datos cambiada a "+dbName);
 				}
-				String tabla=lec.nextLine();
-				String columnas = lec.nextLine();
-				String sql = "INSERT INTO "+tabla+" ("+columnas+") VALUES\n";
+				String tabla=lec.nextLine(); //la segunda linea es la tabla
+				String columnas = lec.nextLine(); //la tercera las columnas
+				String sql = "INSERT INTO "+tabla+" ("+columnas+") VALUES\n"; //creamos la sentencia
 				String valores;
 				do {
-					 String linea = lec.nextLine();
-					 valores = linea.replace(" ", "','");
+					 String linea = lec.nextLine(); //a aprtir de la cuarta los valores
+					 valores = linea.replace(" ", "','"); //los vamos añadiendo a la consulta con el formato adecuado
 					 sql+="('"+valores+"'),\n";
 					
 				}while (lec.hasNextLine());
-				sql = sql.substring(0, sql.length()-2);
+				sql = sql.substring(0, sql.length()-2); //borramos la ultima coma que se le queda a la sntencia
 				//System.out.println(sql);
 				PreparedStatement stmt = DBManager.getConn().prepareStatement(sql);
 				stmt.execute();
@@ -69,7 +86,13 @@ public class DBFileManager {
 		}
 	}
 	
-	public static boolean actualizarDeFichero (String ruta) {
+	/**
+	 * Actualiza registros en una tabla provenientes de un fichero
+	 * 
+	 * @param ruta ruta donde se encuentra el fichero
+	 * @return true si se han actualizado, false si no
+	 */
+	public static boolean actualizarDeFichero (String ruta) { //practicamente mismo procedimiento que el metodo de insertar
 		try {
 			File fichero = new File(ruta);
 			Scanner lec = new Scanner (fichero);
@@ -115,6 +138,12 @@ public class DBFileManager {
 		}
 	}
 	
+	/**
+	 * Borra registros en una tabla provenientes de un fichero
+	 * 
+	 * @param ruta ruta donde se encuentra el fichero
+	 * @return true si se han borrado, false si no
+	 */
 	public static boolean borrarDeFichero (String ruta ) {
 		try {
 			File fichero = new File(ruta);
@@ -128,16 +157,16 @@ public class DBFileManager {
 					System.out.println("Base de datos cambiada a "+dbName);
 				}
 				String tabla=lec.nextLine();
-				String valores = lec.nextLine();
-				String listaValores[] = valores.split(",");
+				String valores = lec.nextLine();//en este caso la tercera linea en adelante son la pk
+				String listaValores[] = valores.split(","); //separamos estos valores
 				do {
-					for (int i=0;i<listaValores.length;i++) {
+					for (int i=0;i<listaValores.length;i++) {               //obtenemos el pk de la tabla				
 						String sql = "SELECT * FROM " + tabla + " WHERE " + DBManager.getPrimaryKey(tabla) + " = " +"'"+listaValores[i]+"'";
 						PreparedStatement stmt = DBManager.getConn().prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
 								ResultSet.CONCUR_UPDATABLE);
-						ResultSet rs = stmt.executeQuery();
+						ResultSet rs = stmt.executeQuery();//hacemos la seleccion de cada uno de ellos
 						
-
+						//y lo borramos
 						 if (rs.first()) {
 				                rs.deleteRow();
 				                rs.close();

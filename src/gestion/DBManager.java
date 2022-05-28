@@ -15,13 +15,23 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
 /**
+ *Clase donde se encuentran todos los metodos para gestionar cualquier base de datos
  *
  * @author Juanma Lobato
+ * @version v1.6 28/05/2022
  */
 public class DBManager {
 
 	// Conexion a la base de datos
+	/**
+	 * Variable de conexion a una BD
+	 * Gestiona la conexion a cualquier base de datos
+	 */
 	private static Connection conn = null;
+	/**
+	 * Variable de conexion a un servidor de BD
+	 * Gestiona la conexion al servidor y la usamos para mostrar las bases de datos
+	 */
 	private static Connection connServer = null;
 
 	// Configuracion de la conexion a la base de datos
@@ -31,13 +41,15 @@ public class DBManager {
 	private static String DB_URL = "jdbc:mysql://" + db_host + ":" + db_port;
 	private static final String DB_USER = "root";
 	private static final String DB_PASS = "1234";
-	private static final String DB_MSQ_CONN_OK = "CONEXION CORRECTA";
-	private static final String DB_MSQ_CONN_NO = "ERROR EN LA CONEXION";
 
 	//////////////////////////////////////////////////
 	// METODOS DE CONEXION A LA BASE DE DATOS
 	//////////////////////////////////////////////////
 
+	/**
+	 * Metodo que pide la direccion del servidor de base de datos
+	 * @return devuelve un string con la direccion
+	 */
 	public static String getHost() {
 		Scanner in = new Scanner(System.in);
 		try {
@@ -52,6 +64,10 @@ public class DBManager {
 
 	}
 
+	/**
+	 * Metodo que pide el host del servidor de base de datos
+	 * @return devuelve un string con el host
+	 */
 	public static String getPort() {
 		Scanner in = new Scanner(System.in);
 		try {
@@ -66,16 +82,26 @@ public class DBManager {
 		}
 	}
 
-
+	/**
+	 * Metodo para obtener el nombre de la BD
+	 * @return devuelve un string con el nombre de la BD
+	 */
 	public static String getDb_name() {
 		return db_name;
 	}
-
+	
+	/**
+	 * Metodo para asignar el nombre de la BD
+	 * @param db_name String del nombre de la BD
+	 */
 	public static void setDb_name(String db_name) {
 		DBManager.db_name = db_name;
 	}
 
-
+	/**
+	 * Metodo que pide el nombre de la base de datos y cierra la conexion con el servidor
+	 * @return Devuelve un String con el nombre de la BD
+	 */
 	public static String getName() {
 		Scanner in = new Scanner(System.in);
 		try {		
@@ -92,6 +118,10 @@ public class DBManager {
 		}
 	}
 	
+	/**
+	 * Metodo que muestra el nombre de las bases de datos alojadas en el servidor
+	 * La usamos para mostrar al usuario las bases e datos disponibles en el servidor y poder elegir una
+	 */
 	public static void getBDs () {
 		try {
 			PreparedStatement sentencia = connServer.prepareStatement("SHOW DATABASES");
@@ -107,7 +137,11 @@ public class DBManager {
 	}
 	
 	
-
+	/**
+	 * Metodo getter de la conexion a la base de datos
+	 * La usamos para comprobar la conexion a la hora de usar un fichero
+	 * @return devuelve un objeto conecction con la conexcion a la BD
+	 */
 	public static Connection getConn() {
 		return conn;
 	}
@@ -132,7 +166,11 @@ public class DBManager {
 			return false;
 		}
 	}
-	
+	/**
+	 * Intenta conectarse al servidor que aloja las bases de datos
+	 * 
+	 * @return devuelve true si se conecta, false si no
+	 */
 	public static boolean connectServer () {
 		try {
 			System.out.print("Conectando al servidor...");
@@ -162,26 +200,6 @@ public class DBManager {
 		}
 	}
 
-	/**
-	 * Comprueba la conexion y muestra su estado por pantalla
-	 *
-	 * @return true si la conexion existe y es valida, false en caso contrario
-	 */
-	public static boolean isConnected() {
-		// Comprobamos estado de la conexion
-		try {
-			if (conn != null && conn.isValid(0)) {
-				System.out.println(DB_MSQ_CONN_OK);
-				return true;
-			} else {
-				return false;
-			}
-		} catch (SQLException ex) {
-			System.out.println(DB_MSQ_CONN_NO);
-			ex.printStackTrace();
-			return false;
-		}
-	}
 
 	/**
 	 * Cierra la conexion con la base de datos
@@ -196,7 +214,9 @@ public class DBManager {
 		}
 	}
 
-
+	/**
+	 * Imprime las tablas que contiene una base de datos
+	 */
 	public static void printTablas() {
 		try {
 			DatabaseMetaData dbmt = conn.getMetaData();
@@ -212,22 +232,12 @@ public class DBManager {
 		}
 	}
 
-	
-	public static void printColumnasTipo(String tabla) {
-		try {
-			DatabaseMetaData dbmt = conn.getMetaData();
-			ResultSet rs = dbmt.getColumns(conn.getCatalog(), null, tabla, "%");
-			System.out.print("Tablas: ");
-			while (rs.next()) {
-				String columnName = rs.getString("COLUMN_NAME");
-				String columnType = rs.getString("TYPE_NAME");
-				System.out.println("Columna: " + columnName + "\nTipo: " + columnType);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
+	/**
+	 * Imprime las columnas de una tabla
+	 * 
+	 * @param tabla nombre de la tabla
+	 * @return devuelve un String con el nombre de las columnas
+	 */
 	public static String printColumnas(String tabla) {
 		try {
 			String columnas="";
@@ -244,6 +254,12 @@ public class DBManager {
 		}
 	}
 
+	/**
+	 * Obtiene las columnas de una tabla
+	 * 
+	 * @param tabla nombre de la tabla
+	 * @return devuelve un resultset con las columnas de la tabla
+	 */
 	public static ResultSet getColumnas(String tabla) {
 		try {
 			DatabaseMetaData dbmt = conn.getMetaData();
@@ -258,6 +274,12 @@ public class DBManager {
 		}
 	}
 
+	/**
+	 * Obtiene una tabla de una base de datos
+	 * 
+	 * @param tabla nombre de la tabla
+	 * @return devuelve un resultset con las tablas de la BD
+	 */
 	public static ResultSet getTabla(String tabla) {
 		try {
 			String consulta = "SELECT * FROM " + tabla;
@@ -271,6 +293,12 @@ public class DBManager {
 		}
 	}
 
+	/**
+	 * Imprime el contenido de una tabla de la base de datos
+	 * 
+	 * @param tabla nombre de la tabla
+	 * @return devuelve un string con el contenido de la tabla
+	 */
 	public static String printTabla(String tabla) {
 		try {
 			ResultSet rs = getTabla(tabla);
@@ -291,6 +319,14 @@ public class DBManager {
 		}
 	}
 	
+	/**
+	 * Obtiene las tuplas filtradas de una tabla mediante una consulta
+	 * 
+	 * @param tabla nombre de la tabla
+	 * @param campo nombre del campo a filtrar
+	 * @param valor valor por el que filtrar
+	 * @return devuelve un resultset con la seleccion de la consulta
+	 */
 	public static ResultSet getTuplas(String tabla, String campo, String valor) {
 		try {
 			// Realizamos la consulta SQL
@@ -314,6 +350,14 @@ public class DBManager {
 		}
 	}
 	
+	/**
+	 * Obtiene las tuplas filtradas de una tabla mediante una consulta
+	 * 
+	 * @param tabla nombre de la tabla
+	 * @param campo nombre del campo a filtrar
+	 * @param valor valor por el que filtrar
+	 * @return devuelve un String con la seleccion de la consulta
+	 */
 	 public static boolean printTuplas(String tabla, String campo, String valor) {
     	 try {
              // Obtenemos el cliente
@@ -336,15 +380,21 @@ public class DBManager {
          }
 	 }
 	
+	 /**
+	  * Crea una tabla en una base de datos con el numero de columnas que se desee
+	  * 
+	  * @param nombre nombre de la tabla 
+	  * @param columnas numero de columnas que tendra la tabla
+	  */
 	public static void crearTabla (String nombre, int columnas) {
 		Scanner in = new Scanner (System.in);
 		try {
 			System.out.println("Introduce el nombre de la columna 1");
-			String col1 = in.next();
-			System.out.println("Introduce el tipo de la columna 1 (1 VARCHAR o 2 INT)");
+			String col1 = in.next(); //pedimo el nombre
+			System.out.println("Introduce el tipo de la columna 1 (1 VARCHAR o 2 INT)"); //pedimos el tipo, habra que introducir 1 o 2
 			int tipo1 = in.nextInt();
 			if(tipo1==1) {
-				PreparedStatement stmt = conn.prepareStatement("CREATE TABLE "+nombre+" ("+col1+" VARCHAR(50)) ");
+				PreparedStatement stmt = conn.prepareStatement("CREATE TABLE "+nombre+" ("+col1+" VARCHAR(50)) ");//creamos la tabla con la primera columna
 				stmt.execute();
 			}else {
 				PreparedStatement stmt = conn.prepareStatement("CREATE TABLE "+nombre+" ("+col1+" INT)");
@@ -353,7 +403,7 @@ public class DBManager {
 			
 			
 			
-			for (int i=2; i<=columnas;i++) {
+			for (int i=2; i<=columnas;i++) { //añadimos el resto de las columnas
 				System.out.println("Introduce el nombre de la columna "+i);
 				String col = in.next();
 				System.out.println("Introduce el tipo de la columna "+i+" (1 VARCHAR o 2 INT");
@@ -379,6 +429,12 @@ public class DBManager {
 		
 	}
 
+	/**
+	 * Inserta un registro en una tabla de la base de datos
+	 * 
+	 * @param tabla nombre de la tabla
+	 * @return true si se ha creado el registro, false si no
+	 */
 	public static boolean insertColumn(String tabla) {
 		try {
 			Scanner ent = new Scanner(System.in);
@@ -391,8 +447,8 @@ public class DBManager {
 			}
 
 			rs.moveToInsertRow();
-			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-				System.out.println("Introduce el valor de: " + rs.getMetaData().getColumnName(i));
+			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {//obtenemos el numero de columnas y las recorremos en un bucle
+				System.out.println("Introduce el valor de: " + rs.getMetaData().getColumnName(i));//obtenemos el nombre y lo vamos mostrando
 				valor = ent.nextLine();
 				rs.updateString(i, valor);
 			}
@@ -409,27 +465,25 @@ public class DBManager {
 	}
 
 	/**
-	 * Solicita a la BD modificar los datos de un cliente
+	 * Solicita a la BD modificar los datos de un registro
 	 *
-	 * @param id        id del cliente a modificar
-	 * @param nombre    nuevo nombre del cliente
-	 * @param direccion nueva direccion del cliente
+	 * @param tabla nombre de la tabla
 	 * @return verdadero si pudo modificarlo, false en caso contrario
 	 */
 	public static boolean updateColumn(String tabla) {
 		try {
 			Scanner ent = new Scanner(System.in);
-			String pk = getPrimaryKey(tabla);
+			String pk = getPrimaryKey(tabla);//obtenemos el campo calve de la tabla
 			System.out.println("Introduce el valor de la columna " + pk + " de la fila que desea modificar");
-			String valor = ent.nextLine();
+			String valor = ent.nextLine(); //se lo pedimos al usuario
 
-			String sql = "SELECT * FROM " + tabla + " WHERE " + pk + " = " + valor;
+			String sql = "SELECT * FROM " + tabla + " WHERE " + pk + " = " + valor; //hacemos una consulta que obtenga ese registro
 			PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
 			ResultSet rs2 = stmt.executeQuery();
 
 			rs2.first();
-			for (int i = 1; i <= rs2.getMetaData().getColumnCount(); i++) {
+			for (int i = 1; i <= rs2.getMetaData().getColumnCount(); i++) {//obtenemos su columna y lo modificamos
 				System.out.println("Introduce el nuevo valor de: " + rs2.getMetaData().getColumnName(i));
 				valor = ent.nextLine();
 				rs2.updateString(i, valor);
@@ -444,11 +498,17 @@ public class DBManager {
 		}
 	}
 
+	/**
+	 * Obtiene la primary key de una tabla de la BD
+	 * 
+	 * @param tabla nombre de la tabla
+	 * @return devuelve un string con el nombre del campo clave
+	 */
 	public static String getPrimaryKey(String tabla) {
 		try {
 
 			DatabaseMetaData dbmd = conn.getMetaData();
-			ResultSet rs = dbmd.getPrimaryKeys(conn.getCatalog(), null, tabla);
+			ResultSet rs = dbmd.getPrimaryKeys(conn.getCatalog(), null, tabla);//este metodo devuelve un resutl set con iformacion de la tabla
 			ResultSetMetaData rsmd = rs.getMetaData();
 
 			String pk = "";
@@ -456,7 +516,7 @@ public class DBManager {
 			while (rs.next()) {
 				for (int i = 1; i <= cols; i++) {
 					rs.getString(i);
-					if (i == 4) {
+					if (i == 4) { //donde la columna 4 es el nombre del campo clave
 						pk = rs.getString(i);
 					}
 				}
@@ -469,9 +529,9 @@ public class DBManager {
 	}
 
 	/**
-	 * Solicita a la BD eliminar un cliente
+	 * Solicita a la BD eliminar un registro
 	 *
-	 * @param id id del cliente a eliminar
+	 * @param tabla nombre de la tabla
 	 * @return verdadero si pudo eliminarlo, false en caso contrario
 	 */
 	public static boolean deleteColumn(String tabla) {

@@ -1,0 +1,18 @@
+banco
+cuentas
+numeroCuenta	dniCliente	estado	saldo	
+1	null	Activa	0.0	
+2	77426718R	Activa	86.0	
+3	26787493L	Activa	30.0	
+4	77536648H	Activa	0.0	
+5	77536648H	Activa	0.0	
+6	77536648H	Activa	0.0	
+7	24850208L	Activa	70.0	
+8	24850208L	Activa	0.0	
+9	23987849J	Activa	0.0	
+10	77426718R	Activa	0.0	
+11	24850208L	Baja	0.0	
+12	24850208L	Activa	0.0	
+13	12345678L	Activa	0.0	
+14	null	Baja	0.0	
+15	null	Baja	0.0	

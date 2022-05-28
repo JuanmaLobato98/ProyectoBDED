@@ -6,8 +6,11 @@ import java.util.Scanner;
 
 
 /**
+ *Clase se encuentra el menu dentro del main donde funcionan todas las utilidades
+ *del programa
  *
  * @author Juanma Lobato
+ * @version 1.6 28/05/2022
  */
 public class GestionClientes {
 
@@ -28,7 +31,11 @@ public class GestionClientes {
         DBManager.close();
 
     }
-
+    /**
+     * Metodo que ejecuita el menu principal donde se alojan todas 
+     * las opciones del programa
+     * @return devuelve false mientras siga funcionando, true cuando para
+     */
     public static boolean menuPrincipal() {
         System.out.println("");
         System.out.println("MENU PRINCIPAL");
@@ -43,6 +50,7 @@ public class GestionClientes {
         System.out.println("8. Filtrar filas");
         System.out.println("9. Insertar desde fichero");
         System.out.println("10. Actualizar desde fichero");
+        System.out.println("11. Borrar desde fichero");
        try {
     	   Scanner in = new Scanner(System.in);
            
@@ -58,13 +66,13 @@ public class GestionClientes {
                    opcionImprimirTabla();
                    return false;
                case 3:
-                   opcionNuevoCliente();
+                   opcionNuevoRegistro();
                    return false;
                case 4:
-                   opcionModificarCliente();
+                   opcionModificarRegistro();
                    return false;
                case 5:
-                   opcionEliminarCliente();
+                   opcionEliminarRegistro();
                    return false;
                case 6:
                	opcionExportarTabla();
@@ -96,6 +104,12 @@ public class GestionClientes {
         
     }
     
+    /**
+     * Metodo para pedir un entero al usuario
+     * 
+     * @param mensaje Mensaje que visualiza el usuario
+     * @return devuelve el entero introducido por el usuario
+     */
     public static int pideInt(String mensaje){
         
         while(true) {
@@ -111,6 +125,12 @@ public class GestionClientes {
         }
     }
     
+    /**
+     * Metodo para pedir un String al usuario
+     * 
+     * @param mensaje Mensaje que visualiza el usuario
+     * @return devuelve el String introducido por el usuario
+     */
     public static String pideLinea(String mensaje){
         
         while(true) {
@@ -125,6 +145,9 @@ public class GestionClientes {
         }
     }
     
+    /**
+     * Funcion que llama al Metodo para cambiar de base de datos
+     */
     public static void opcionCambiarBD () {
     	DBManager.close();
     	DBManager.connectServer();
@@ -133,6 +156,9 @@ public class GestionClientes {
         DBManager.connect();
     }
     
+    /**
+     * Funcion que llama al Metodo que imprime una tabla 
+     */
     public static void opcionImprimirTabla () {
     	Scanner in = new Scanner (System.in);
     	DBManager.printTablas();
@@ -141,8 +167,10 @@ public class GestionClientes {
     	System.out.println( DBManager.printTabla(tabla));
     }
 
-
-    public static void opcionNuevoCliente() {
+    /**
+     * Funcion que llama al Metodo para insertar un nuevo registro
+     */
+    public static void opcionNuevoRegistro() {
         Scanner in = new Scanner(System.in);
         DBManager.printTablas();
         System.out.println("Introduce en que tabla insertar:");
@@ -158,7 +186,10 @@ public class GestionClientes {
         }
     }
 
-    public static void opcionModificarCliente() {
+    /**
+     * Funcion que llama al Metodo para modificar un registro
+     */
+    public static void opcionModificarRegistro() {
         Scanner in = new Scanner(System.in);
 
         DBManager.printTablas();
@@ -176,7 +207,10 @@ public class GestionClientes {
         }
     }
 
-    public static void opcionEliminarCliente() {
+    /**
+     * Funcion que llama al Metodo para eliminar un registro de la base de datos
+     */
+    public static void opcionEliminarRegistro() {
         Scanner in = new Scanner(System.in);
 
         DBManager.printTablas();
@@ -192,6 +226,9 @@ public class GestionClientes {
         }
     }
     
+    /**
+     * Funcion que llama al Metodo para exportar una tabla de la base de datos a un fichero
+     */
     public static void opcionExportarTabla () {
     	Scanner in = new Scanner(System.in);
 
@@ -207,6 +244,9 @@ public class GestionClientes {
         }
     }
     
+    /**
+     * Funcion que llama al Metodo para crear una tabla en ua base de datos
+     */
     public static void opcionCrearTabla () {
     	Scanner in = new Scanner (System.in);
     	
@@ -219,6 +259,9 @@ public class GestionClientes {
 
     }
     
+    /**
+     * Funcion que llama al Metodo para filtrar registros de una tabla de la BD
+     */
     public static void opcionFiltrarFilas () {
     	Scanner in = new Scanner (System.in);
     	
@@ -235,6 +278,9 @@ public class GestionClientes {
     	DBManager.printTuplas(tabla, campo, valor);
     }
     
+    /**
+     * Funcion que llama al metodo para insertar registros desde un fichero
+     */
     public static void opcionInsertarFichero () {
     	Scanner in = new Scanner (System.in);
     	
@@ -244,6 +290,9 @@ public class GestionClientes {
     	DBFileManager.insertarDeFichero(ruta);
     }
     
+    /**
+     * Funcion que llama al metodo para actualizar registros desde ujn fichero
+     */
     public static void opcionActualizarFichero () {
     	Scanner in = new Scanner (System.in);
     	
@@ -253,6 +302,9 @@ public class GestionClientes {
     	DBFileManager.actualizarDeFichero(ruta);
     }
     
+    /**
+     * Funcion que llama al metodo para borrar registros desde un fichero
+     */
     public static void opcionBorrarFichero () {
     	Scanner in = new Scanner (System.in);
     	
