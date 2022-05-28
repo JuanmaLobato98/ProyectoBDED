@@ -5,7 +5,7 @@ Juan Manuel Fernández Lobato
 
 Version final del proyecto de los módulos de BBDD y EEDD
 
-El proyecto consta con todos los puntos especificados en la práctica en cuanto a la modiicación del programa. Es capaz de trabajar con cualquier base de datos
+El proyecto consta con todos los puntos especificados en la práctica en cuanto a la modificación del programa. Es capaz de trabajar con cualquier base de datos
 la cual le insertes a traves de la consola. Los ficheros que se encuentran en la raiz del proyecto son los que he usado para insertar, modificar o borrar como ejemplo
 
 En el repositorio hay también una rama de la versión GUI que únicamente ha sido creada, desde la version del PreparedStament, y no se ha modificado más.
