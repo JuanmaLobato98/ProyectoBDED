@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>200</x>
+      <y>288</y>
+      <w>184</w>
+      <h>248</h>
+    </coordinates>
+    <panel_attributes>app::GestionClientes
+--
+--
++main(String[] args): void
++menuPrincipal(): boolean
++pideInt(String mensaje): int
++pideLinea(String mensaje): String
++opcionCambiarBD(): void
++opcionImprimirTabla(): void
++opcionNuevoRegistro(): void
++opcionModificarRegistro(): void
++opcionEliminarRegistro(): void
++opcionExportarTabla(): void
++opcionCrearTabla(): void
++opcionFiltrarFilas(): void
++opcionInsertarFichero(): void
++opcionActualizarFichero(): void
++opcionBorrarFichero(): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>584</x>
+      <y>328</y>
+      <w>328</w>
+      <h>464</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;control&gt;&gt;
+gestion::DBManager
+--
+-conn = null: Connection
+-connServer = null: Connection
+-db_host = getHost(): String
+-db_port = getPort(): String
+-db_name = null: String
+-DB_URL = "jdbc:mysql://" + db_host + ":" + db_port: String
+-DB_USER = "root": String
+-DB_PASS = "1234": String
+--
++getHost(): String
++getPort(): String
++getDb_name(): String
++setDb_name(String db_name): void
++getName(): String
++getBDs(): void
++getConn(): Connection
++loadDriver(): boolean
++connectServer(): boolean
++connect(): boolean
++close(): void
++printTablas(): void
++printColumnas(String tabla): String
++getColumnas(String tabla): ResultSet
++getTabla(String tabla): ResultSet
++printTabla(String tabla): String
++getTuplas(String tabla, String campo, String valor): ResultSet
++printTuplas(String tabla, String campo, String valor): boolean
++crearTabla(String nombre, int columnas): void
++insertColumn(String tabla): boolean
++updateColumn(String tabla): boolean
++getPrimaryKey(String tabla): String
++deleteColumn(String tabla): boolean
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>648</x>
+      <y>136</y>
+      <w>248</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;control&gt;&gt;
+gestion::DBFileManager
+--
+--
++exportarTabla(String tabla): boolean
++insertarDeFichero(String ruta): boolean
++actualizarDeFichero(String ruta): boolean
++borrarDeFichero(String ruta): boolean
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>488</x>
+      <y>80</y>
+      <w>552</w>
+      <h>768</h>
+    </coordinates>
+    <panel_attributes>Gestion
+--
+
+
+fg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>376</x>
+      <y>184</y>
+      <w>288</w>
+      <h>216</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>340.0;10.0;170.0;10.0;170.0;250.0;10.0;250.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>376</x>
+      <y>448</y>
+      <w>224</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>260.0;180.0;190.0;180.0;190.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>768</x>
+      <y>216</y>
+      <w>24</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;140.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLActor</id>
+    <coordinates>
+      <x>32</x>
+      <y>360</y>
+      <w>48</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>Usuario</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>184</x>
+      <y>256</y>
+      <w>224</w>
+      <h>328</h>
+    </coordinates>
+    <panel_attributes>App
+--
+
+fg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>80</x>
+      <y>376</y>
+      <w>120</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes/>
+    <additional_attributes>130.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+</diagram>
