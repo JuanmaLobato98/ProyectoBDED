@@ -6,8 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-//import java.sql.SQLException;
-//import java.util.Scanner;
+import java.sql.SQLException;
+import java.util.Scanner;
 
 /**
  * Clase que gestiona los metodos que trabajan con ficheros en la base de datos
